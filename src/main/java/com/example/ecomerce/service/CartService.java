@@ -10,6 +10,7 @@ import java.time.Duration;
 import java.time.LocalDateTime;
 import java.util.Collection;
 import java.util.List;
+import java.util.UUID;
 
 @Service
 public class CartService {
@@ -46,14 +47,19 @@ public class CartService {
     }
 
 
-    @Scheduled(fixedRate = 60000)
+    @Scheduled(fixedRate = 30000)
     public void removeInactiveCarts() {
-        Collection<Cart> carts = cartRepository.getAllCarts();
+        System.out.println("Verificando carritos inactivos...");
+
         LocalDateTime now = LocalDateTime.now();
 
-        carts.stream()
+        List<String> cartsToRemove = cartRepository.getAllCarts().stream()
                 .filter(cart -> Duration.between(cart.getLastUpdate(), now).toMinutes() >= 10)
                 .map(Cart::getId)
-                .forEach(cartRepository::deleteCart);
+                .toList();
+
+        cartsToRemove.forEach(cartRepository::deleteCart);
+
+        System.out.println("Carritos eliminados por inactividad: " + cartsToRemove.size());
     }
 }

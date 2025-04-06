@@ -32,16 +32,4 @@ public class CartRepository {
         return cartStorage.get(id);
     }
 
-    public void cleanExpiredCarts() {
-        Iterator<Map.Entry<String, Cart>> iterator = cartStorage.entrySet().iterator();
-        LocalDateTime now = LocalDateTime.now();
-
-        while (iterator.hasNext()) {
-            Map.Entry<String, Cart> entry = iterator.next();
-            Cart cart = entry.getValue();
-            if (Duration.between(cart.getLastUpdate(), now).toMinutes() >= 10) {
-                iterator.remove();
-            }
-        }
-    }
 }
